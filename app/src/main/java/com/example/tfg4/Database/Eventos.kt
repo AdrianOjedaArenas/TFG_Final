@@ -1,9 +1,12 @@
 package com.example.tfg4.Database
 
+import java.util.*
+
 
 data class Eventos(
 
-    val id:Long? = null,
-    val name: String? = null
+    val titulo: String? = null,
+    val fecha: Date? = null,
+    val descripcion: String?
 
 )

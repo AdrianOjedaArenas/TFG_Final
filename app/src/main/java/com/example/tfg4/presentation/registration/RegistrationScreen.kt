@@ -1,7 +1,5 @@
 package com.example.tfg4.presentation.registration
 
-import android.app.AlertDialog
-import android.os.Message
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -34,7 +32,6 @@ import com.example.tfg4.presentation.components.SocialMediaButton
 import com.example.tfg4.presentation.components.TransparentTextField
 import com.example.tfg4.ui.theme.FACEBOOKCOLOR
 import com.example.tfg4.ui.theme.GMAILCOLOR
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun RegistrationScreen(

@@ -1,5 +1,7 @@
 package com.example.tfg4.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -132,6 +134,7 @@ fun NavGraphBuilder.addHome(mainViewModel: MainViewModel, events: List<String>,n
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addCreateEvent(
     navController: NavHostController

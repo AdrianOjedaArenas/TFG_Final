@@ -6,12 +6,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.example.tfg4.Database.Controller
 import com.example.tfg4.R
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.firebase.auth.FirebaseAuth
-import dev.leonardom.loginjetpackcompose.navigation.Destinations
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
