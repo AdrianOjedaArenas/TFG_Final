@@ -24,7 +24,6 @@ import androidx.navigation.NavHostController
 import com.example.tfg4.R
 import dev.leonardom.loginjetpackcompose.navigation.Destinations
 
-
 @Composable
 fun principal(
      mainViewModel:MainViewModel,

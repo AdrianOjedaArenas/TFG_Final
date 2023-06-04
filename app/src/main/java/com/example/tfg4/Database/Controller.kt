@@ -16,28 +16,29 @@ class Controller{
      @SuppressLint("SimpleDateFormat")
      fun crearEvento(titulo: String, fecha: String, descripcion: String) {
 
-         GlobalScope.launch {
-             try {
+         val format = SimpleDateFormat("dd/mm/yyyy")
+         val fechaDate: Date = format.parse(fecha)
 
-                 val format = SimpleDateFormat("yyyy-MM-dd")
-                 val fechaDate: Date = format.parse(fecha)
+         val evento = Eventos(
 
-                 val evento = Eventos(
-                     titulo,
-                     fechaDate,
-                     descripcion
-                 )
+             titulo,
+             fechaDate,
+             descripcion
+         )
 
-                 db.collection("eventos")
-                     .add(evento)
-                    // .await() // Esperar a que la operación se complete
-
-                 Log.d(TAG, "DocumentSnapshot successfully written!")
-             } catch (e: Exception) {
-                 Log.w(TAG, "Error writing document", e)
+         db.collection("eventos")
+             .add(evento)
+             .addOnSuccessListener { documentReference ->
+                 val documentId = documentReference.id
+                 // Aquí puedes utilizar el ID del documento como lo necesites
+                 Log.d(TAG, "Documento creado con ID: $documentId")
              }
+             .addOnFailureListener { e ->
+                 Log.w(TAG, "Error al crear el documento", e)
+             }
+
          }
-     }
+
 
      fun crearUser(email:String,password:String) {
 
