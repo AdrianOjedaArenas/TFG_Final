@@ -46,8 +46,12 @@ import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tfg4.Database.Controller
 import com.example.tfg4.R
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -127,8 +131,9 @@ Scaffold(
                             if ( comprobarDatos(titulo,fecha,context)) {
 
                                 //Se añaden los datos a la base de datos
-                                c.crearEvento(titulo,fecha,descripcion)
-                                navController.navigate(Destinations.Home.route)
+
+                                    c.crearEvento(titulo, fecha, descripcion)
+                                    navController.navigate(Destinations.Home.route)
 
                             }
                         }

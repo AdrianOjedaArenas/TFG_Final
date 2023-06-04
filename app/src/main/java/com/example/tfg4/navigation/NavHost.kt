@@ -124,12 +124,12 @@ fun NavGraphBuilder.addRegister(
 }
 
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addHome(mainViewModel: MainViewModel, events: List<String>,navController: NavHostController) {
+fun NavGraphBuilder.addHome(mainViewModel: MainViewModel,navController: NavHostController) {
     composable(
         route = Destinations.Home.route
     ) {
 
-        principal(mainViewModel, events,navController)
+        principal(mainViewModel,navController)
 
     }
 }

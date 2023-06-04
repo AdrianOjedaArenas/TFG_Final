@@ -1,10 +1,12 @@
 package com.example.tfg4
 
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import com.example.tfg4.navigation.addCreateEvent
@@ -15,6 +17,7 @@ import com.example.tfg4.presentation.home.MainViewModel
 import com.example.tfg4.ui.theme.TFG4Theme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
 import dev.leonardom.loginjetpackcompose.navigation.Destinations
 
@@ -23,9 +26,8 @@ import dev.leonardom.loginjetpackcompose.navigation.Destinations
 class MainActivity : ComponentActivity() {
 
      val mainViewModel: MainViewModel by viewModels()
-     val events :List<String> = listOf("Pepa","manue","Rigoberto")
 
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -41,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
                         addRegister(navController)
 
-                        addHome(mainViewModel,events,navController)
+                        addHome(mainViewModel,navController)
 
                         addCreateEvent(navController)
                     }

@@ -12,8 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,14 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.tfg4.Database.Controller
+import com.example.tfg4.Database.Eventos
 import com.example.tfg4.R
 import dev.leonardom.loginjetpackcompose.navigation.Destinations
-
 
 @Composable
 fun principal(
      mainViewModel:MainViewModel,
-     events :List<String>,
      navController: NavHostController
 ){
     val searchWidgetState by mainViewModel.searchWidgetState
@@ -59,15 +58,16 @@ fun principal(
         bottomBar = { BottomNavigation() }
 
     ) { padding ->
-        EventList(events)
+
+        EventList()
 
 
     }
 }
 
-
 @Composable
-fun MessageCard() {
+fun MessageCard(evento :Eventos) {
+
     // Add padding around our message
     Row(modifier = Modifier.padding(all = 8.dp)) {
         Image(
@@ -84,21 +84,36 @@ fun MessageCard() {
         Spacer(modifier = Modifier.width(8.dp))
 
         Column {
-            Text(text = "Futbol Playa")
+            Row() {
+                evento.titulo?.let { Text(text = it) }
+
+                Text(
+                    text = evento.fecha.toString(),
+                    modifier = Modifier
+                        .wrapContentWidth(align = Alignment.CenterHorizontally)
+                )
+            }
 
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "C/ Fernandez Ballesteros")
+            evento.descripcion?.let { Text(text = it) }
         }
     }
 }
 //Lista de eventos
 @Composable
-fun EventList(events: List<String>) {
-    //Acceder a la base de datos para obtener la lista de eventos
+fun EventList() {
+    val c = Controller()
+    val eventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
 
-    LazyColumn{
-        items(events) { listaItem ->
-            MessageCard()
+    LaunchedEffect(Unit) {
+        c.getAllEventos { eventosList ->
+            eventosListState.value = eventosList
+        }
+    }
+
+    LazyColumn {
+        items(eventosListState.value) { evento ->
+            MessageCard(evento)
         }
     }
 }
