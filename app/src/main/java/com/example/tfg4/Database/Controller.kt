@@ -6,13 +6,9 @@ import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.Flow
 
 class Controller{
     val db = Firebase.firestore
@@ -20,49 +16,28 @@ class Controller{
      @SuppressLint("SimpleDateFormat")
      fun crearEvento(titulo: String, fecha: String, descripcion: String) {
 
-         val format = SimpleDateFormat("dd/mm/yyyy")
-         val fechaDate: Date = format.parse(fecha)
+         GlobalScope.launch {
+             try {
 
-         val evento = Eventos(
-             titulo,
-             fechaDate,
-             descripcion
-         )
+                 val format = SimpleDateFormat("yyyy-MM-dd")
+                 val fechaDate: Date = format.parse(fecha)
 
-         db.collection("eventos")
-             .add(evento)
-             .addOnSuccessListener { documentReference ->
-                 val documentId = documentReference.id
-                 // Aquí puedes utilizar el ID del documento como lo necesites
-                 Log.d(TAG, "Documento creado con ID: $documentId")
+                 val evento = Eventos(
+                     titulo,
+                     fechaDate,
+                     descripcion
+                 )
+
+                 db.collection("eventos")
+                     .add(evento)
+                    // .await() // Esperar a que la operación se complete
+
+                 Log.d(TAG, "DocumentSnapshot successfully written!")
+             } catch (e: Exception) {
+                 Log.w(TAG, "Error writing document", e)
              }
-             .addOnFailureListener { e ->
-                 Log.w(TAG, "Error al crear el documento", e)
-             }
-
+         }
      }
-
-    fun getEvento(){
-
-
-
-    }
-
-    fun getAllEventos(callback: (List<Eventos>) -> Unit) {
-        db.collection("eventos").get()
-            .addOnSuccessListener { querySnapshot ->
-                val eventosList = mutableListOf<Eventos>()
-                for (document in querySnapshot) {
-                    val evento = document.toObject(Eventos::class.java)
-                    eventosList.add(evento)
-                }
-                callback(eventosList)
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error al obtener eventos: ", exception)
-                callback(emptyList())
-            }
-    }
 
      fun crearUser(email:String,password:String) {
 
