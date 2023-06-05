@@ -15,7 +15,8 @@ import java.util.*
 import java.util.concurrent.Flow
 
 class Controller{
-    val db = Firebase.firestore
+
+    private val db = Firebase.firestore
 
      @SuppressLint("SimpleDateFormat")
      fun crearEvento(titulo: String, fecha: String, descripcion: String) {
@@ -42,9 +43,23 @@ class Controller{
 
      }
 
-    fun getEvento(){
+    fun getEvento(searchText :String,callback: (List<Eventos>) -> Unit){
 
-
+        db.collection("eventos")
+            .whereEqualTo("title", searchText)
+            .get()
+            .addOnSuccessListener { documents ->
+                val filteredEvents = mutableListOf<Eventos>() // Lista para almacenar eventos filtrados
+                for (document in documents) {
+                    val event = document.toObject(Eventos::class.java)
+                    filteredEvents.add(event) // Agregar evento filtrado a la lista
+                }
+                callback(filteredEvents)
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error al obtener los eventos especificados: ", exception)
+            }
+            callback(emptyList())
 
     }
 

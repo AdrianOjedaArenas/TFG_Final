@@ -7,6 +7,6 @@ data class Eventos(
 
     val titulo: String? = null,
     val fecha: Date? = null,
-    val descripcion: String?
+    val descripcion: String? = null
 
 )
