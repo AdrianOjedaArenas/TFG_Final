@@ -20,9 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg4.Database.Controller
@@ -54,6 +57,7 @@ fun principal(
                 },
                 onSearchClicked = {
                     Log.d("Searched Text", it)
+
                 },
                 onSearchTriggered = {
                     mainViewModel.updateSearchWidgetState(newValue = SearchWidgetState.OPENED)
@@ -67,7 +71,13 @@ fun principal(
 
     ) {
 
-        EventList()
+        if(searchTextState.isBlank() ||searchTextState.isEmpty())
+            EventList()
+        else
+            //Arreglar
+            //La lista aparece vacia pero deberia aparecer con los datos filtrados
+            FilteredEventList(searchTextState)
+
 
     }
 }
@@ -77,7 +87,6 @@ fun MessageCard(evento :Eventos) {
 
     val dateFormat = SimpleDateFormat("dd/mm/yy", Locale.getDefault())
     val formattedDate : String? = evento.fecha?.let { dateFormat.format(it) }
-
 
     // Add padding around our message
     Row(modifier = Modifier.padding(all = 10.dp)) {
@@ -95,22 +104,27 @@ fun MessageCard(evento :Eventos) {
         Spacer(modifier = Modifier.width(10.dp))
 
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 evento.titulo?.let {
                     Text(
                         text = it,
+                        modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
                         style = TextStyle(fontWeight = FontWeight.Bold)
 
                     )
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.size(20.dp))
 
                 formattedDate?.let {
                     Text(
                         text = it,
-                        modifier = Modifier.widthIn(min = 8.dp),
+                        modifier = Modifier
+                            .widthIn(min = 8.dp),
+
                         textAlign = TextAlign.End,
                     )
                 }
@@ -118,14 +132,35 @@ fun MessageCard(evento :Eventos) {
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            evento.descripcion?.let {
-                val maxLength = 90 // Número máximo de caracteres a mostrar
-                val truncatedText = if (it.length > maxLength) it.take(maxLength) + "..." else it
-                Text(text = truncatedText)
+            Row(verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                evento.descripcion?.let {
+                    val maxLength = 90 // Número máximo de caracteres a mostrar
+                    val truncatedText = if (it.length > maxLength) it.take(maxLength) + "..." else it
+
+                    Text(
+                        text = truncatedText,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    )
+
+                }
+
+                Spacer(modifier = Modifier.size(20.dp))
+
+                evento.hora?.let{
+
+                    Text(
+                        text = it,
+                        modifier = Modifier.widthIn(min = 8.dp),
+                        textAlign = TextAlign.End,
+                    )
+
+                }
             }
-
         }
-
     }
 }
 //Lista de eventos
@@ -142,6 +177,23 @@ fun EventList() {
 
     LazyColumn {
         items(eventosListState.value) { evento ->
+            MessageCard(evento)
+        }
+    }
+}
+@Composable
+fun FilteredEventList(searchTextState:String) {
+    val c = Controller()
+    val filteredEventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
+
+    LaunchedEffect(Unit) {
+        c.getEvento(searchTextState) { eventosList ->
+            filteredEventosListState.value = eventosList
+        }
+    }
+
+    LazyColumn {
+        items(filteredEventosListState.value) { evento ->
             MessageCard(evento)
         }
     }

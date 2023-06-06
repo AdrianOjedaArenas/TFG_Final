@@ -3,6 +3,7 @@ package com.example.tfg4.presentation.createEvent
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -38,6 +39,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -64,6 +66,7 @@ fun createEventScreen(navController: NavHostController){
     var titulo by remember{ mutableStateOf("") }
     var fecha by remember{ mutableStateOf("") }
     var descripcion by remember{ mutableStateOf("") }
+    val hora = remember { mutableStateOf("") }
 
     //Calendario
 
@@ -132,7 +135,7 @@ Scaffold(
 
                                 //Se añaden los datos a la base de datos
 
-                                    c.crearEvento(titulo, fecha, descripcion)
+                                    c.crearEvento(titulo, fecha,hora.value, descripcion)
                                     navController.navigate(Destinations.Home.route)
 
                             }
@@ -230,13 +233,47 @@ Scaffold(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .clickable {
-                                mDatePickerDialog.show()
-                            },
+
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    FloatingActionButton(
+                        modifier = Modifier
+                            .size(40.dp),
+                        // .align(Alignment.CenterVertically),
+                        backgroundColor = MaterialTheme.colors.primary,
+                        onClick = {
+                            //meter reloj
+                            showTimePickerDialog(context, hora)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            imageVector = Icons.Filled.AccessTime,
+                            contentDescription = "Reloj Icon",
+                            tint = Color.White
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    OutlinedTextField(
+                        value = hora.value,
+                        onValueChange = { hora.value = it },
+                        label = { Text("Hora") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    )
+                }
 
             }
     }
@@ -294,10 +331,22 @@ fun comprobarDatos(titulo:String, fecha:String, context:Context):Boolean{
 
     if ( titulo.isNotBlank() && titulo.isNotEmpty()  && comprobarFecha(fecha, context)) {
 
-        Toast.makeText(context, "Evento creado", Toast.LENGTH_LONG)
-            .show()
+        if( titulo.length > 20) {
 
-        return true
+            Toast.makeText(
+                context,
+                " El 'Titulo no puede contener mas de 20 caracteres",
+                Toast.LENGTH_LONG
+            )
+                .show()
+
+            return false
+        }else {
+            Toast.makeText(context, "Evento creado", Toast.LENGTH_LONG)
+                .show()
+
+            return true
+        }
     }
     else if( titulo.isBlank() || titulo.isEmpty()  && comprobarFecha(fecha, context)) {
 
@@ -370,7 +419,22 @@ fun AddImageButton(context:Context, modifier:Modifier) {
 }
 
 
+private fun showTimePickerDialog(context: Context, hora: MutableState<String>) {
+    val selectedTime = Calendar.getInstance()
+    val timePicker = TimePickerDialog(
+        context,
+        { _, hourOfDay, minute ->
+            selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            selectedTime.set(Calendar.MINUTE, minute)
+            hora.value = String.format("%02d:%02d", hourOfDay, minute)
+        },
+        selectedTime.get(Calendar.HOUR_OF_DAY),
+        selectedTime.get(Calendar.MINUTE),
+        false
+    )
 
+    timePicker.show()
+}
 
 
 

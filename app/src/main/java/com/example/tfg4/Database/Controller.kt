@@ -2,31 +2,35 @@ package com.example.tfg4.Database
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.Flow
 
 class Controller{
 
     private val db = Firebase.firestore
 
+     @RequiresApi(Build.VERSION_CODES.O)
      @SuppressLint("SimpleDateFormat")
-     fun crearEvento(titulo: String, fecha: String, descripcion: String) {
+     fun crearEvento(titulo: String, fecha: String, hora: String, descripcion: String) {
 
-         val format = SimpleDateFormat("dd/mm/yyyy")
-         val fechaDate: Date = format.parse(fecha)
+         val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+         val fechaDate: Date = dateFormat.parse(fecha) as Date
+         val formatterHora = DateTimeFormatter.ofPattern("HH:mm")
+         val horaLocalTime :LocalTime = LocalTime.parse(hora,formatterHora)
+         val horaLocalTimeStr :String = horaLocalTime.toString()
 
          val evento = Eventos(
              titulo,
              fechaDate,
+             horaLocalTimeStr,
              descripcion
          )
 
@@ -46,7 +50,7 @@ class Controller{
     fun getEvento(searchText :String,callback: (List<Eventos>) -> Unit){
 
         db.collection("eventos")
-            .whereEqualTo("title", searchText)
+            .whereEqualTo("titulo", searchText)
             .get()
             .addOnSuccessListener { documents ->
                 val filteredEvents = mutableListOf<Eventos>() // Lista para almacenar eventos filtrados
@@ -58,8 +62,10 @@ class Controller{
             }
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error al obtener los eventos especificados: ", exception)
+
+                callback(emptyList())
             }
-            callback(emptyList())
+
 
     }
 
