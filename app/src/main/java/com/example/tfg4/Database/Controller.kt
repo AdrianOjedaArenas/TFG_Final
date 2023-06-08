@@ -19,7 +19,7 @@ class Controller{
 
      @RequiresApi(Build.VERSION_CODES.O)
      @SuppressLint("SimpleDateFormat")
-     fun crearEvento(titulo: String, fecha: String, hora: String, descripcion: String) {
+     fun crearEvento(titulo: String, fecha: String, hora: String, descripcion: String, callback: (String) -> Unit) {
 
          val dateFormat = SimpleDateFormat("dd/MM/yyyy")
          val fechaDate: Date = dateFormat.parse(fecha) as Date
@@ -28,6 +28,7 @@ class Controller{
          val horaLocalTimeStr :String = horaLocalTime.toString()
 
          val evento = Eventos(
+             "",
              titulo,
              fechaDate,
              horaLocalTimeStr,
@@ -37,12 +38,21 @@ class Controller{
          db.collection("eventos")
              .add(evento)
              .addOnSuccessListener { documentReference ->
-                 val documentId = documentReference.id
+                  val documentId = documentReference.id
                  // Aquí puedes utilizar el ID del documento como lo necesites
+                 evento.id = documentId
+
+                 //actualizamos el documento con la id que se acaba de crear automaticamente
+                 documentReference.update("id",documentId)
+                     .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+                     .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+
                  Log.d(TAG, "Documento creado con ID: $documentId")
+                 callback(documentId)
              }
              .addOnFailureListener { e ->
                  Log.w(TAG, "Error al crear el documento", e)
+                 callback(null.toString())
              }
 
      }
@@ -84,6 +94,20 @@ class Controller{
                 callback(emptyList())
             }
     }
+
+    fun deleteEvento(eventId: String){
+
+        val docRef = db.collection("eventos").document(eventId)
+        docRef.delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "Evento eliminado correctamente")
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error al eliminar el evento: $exception")
+            }
+
+    }
+
 
      fun crearUser(email:String,password:String) {
 

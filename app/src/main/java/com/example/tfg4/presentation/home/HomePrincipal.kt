@@ -1,7 +1,11 @@
 package com.example.tfg4.presentation.home
 
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,11 +35,13 @@ import androidx.navigation.NavHostController
 import com.example.tfg4.Database.Controller
 import com.example.tfg4.Database.Eventos
 import com.example.tfg4.R
+import com.example.tfg4.Utilities.DiferenciaEntreFechaActual
 import dev.leonardom.loginjetpackcompose.navigation.Destinations
 import io.grpc.Context
 import java.text.SimpleDateFormat
 import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun principal(
      mainViewModel:MainViewModel,
@@ -82,11 +88,13 @@ fun principal(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MessageCard(evento :Eventos) {
 
-    val dateFormat = SimpleDateFormat("dd/mm/yy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     val formattedDate : String? = evento.fecha?.let { dateFormat.format(it) }
+
 
     // Add padding around our message
     Row(modifier = Modifier.padding(all = 10.dp)) {
@@ -128,6 +136,18 @@ fun MessageCard(evento :Eventos) {
                         textAlign = TextAlign.End,
                     )
                 }
+
+                Spacer(modifier = Modifier.size(10.dp))
+
+                evento.hora?.let{
+
+                    Text(
+                        text = it,
+                        modifier = Modifier.widthIn(min = 8.dp),
+                        textAlign = TextAlign.End,
+                    )
+
+                }
             }
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -150,20 +170,15 @@ fun MessageCard(evento :Eventos) {
 
                 Spacer(modifier = Modifier.size(20.dp))
 
-                evento.hora?.let{
 
-                    Text(
-                        text = it,
-                        modifier = Modifier.widthIn(min = 8.dp),
-                        textAlign = TextAlign.End,
-                    )
+                cuentaAtras(evento)
 
-                }
             }
         }
     }
 }
 //Lista de eventos
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventList() {
     val c = Controller()
@@ -181,6 +196,7 @@ fun EventList() {
         }
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FilteredEventList(searchTextState:String) {
     val c = Controller()
@@ -222,9 +238,6 @@ private fun bottomCreateEvent(modifier: Modifier = Modifier,navController:NavHos
         )
     }
 }
-
-
-
 
 
 @Composable
@@ -269,5 +282,71 @@ private fun BottomNavigation(modifier: Modifier = Modifier) {
 
             }
         )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun cuentaAtras(evento:Eventos){
+    val cuentaAtras  = remember { mutableStateOf("") }
+    val horaEvento = evento.hora
+    val fechaEvento = evento.fecha
+    val c = Controller()
+    val deleteEventoState = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+
+   var  tiempoRestante = horaEvento?.let { fechaEvento?.let { it1 -> DiferenciaEntreFechaActual(it1, it) } }
+
+    val tiempo = tiempoRestante?.split(" ")
+
+    val dias = tiempo?.get(0)?.toIntOrNull() ?: 0
+    val horas = tiempo?.get(2)?.toIntOrNull() ?: 0
+    val minutos = tiempo?.get(4)?.toIntOrNull() ?: 0
+    val segundos = tiempo?.get(6)?.toIntOrNull() ?: 0
+
+    val totalSegundos = segundos + minutos * 60 + horas * 3600 + dias * 86400
+
+    var timer = Timer()
+    val handler = Handler(Looper.getMainLooper())
+
+    timer.schedule(object : TimerTask() {
+        var contador = totalSegundos
+
+        override fun run() {
+            if (contador > 0) {
+                val diasRestantes = contador / 86400
+                val horasRestantes = (contador % 86400) / 3600
+                val minutosRestantes = ((contador % 86400) % 3600) / 60
+                val segundosRestantes = ((contador % 86400) % 3600) % 60
+
+                val tiempoRestanteActualizado = "$diasRestantes d $horasRestantes h $minutosRestantes m $segundosRestantes s"
+
+                handler.post {
+
+                    // Aquí puedes actualizar la interfaz de usuario con el tiempo restante
+                    cuentaAtras.value = tiempoRestanteActualizado
+
+                }
+                contador--
+
+            } else {
+                timer.cancel()
+
+                deleteEventoState.value = true
+            }
+        }
+    }, 0, 1000)
+    }
+
+    Text(
+        text = cuentaAtras.value,
+        modifier = Modifier.widthIn(min = 8.dp),
+        textAlign = TextAlign.End
+
+    )
+
+    if (deleteEventoState.value) {
+        evento.id?.let { c.deleteEvento(it) }
     }
 }

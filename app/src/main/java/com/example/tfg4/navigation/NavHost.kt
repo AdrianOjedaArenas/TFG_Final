@@ -123,6 +123,7 @@ fun NavGraphBuilder.addRegister(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addHome(mainViewModel: MainViewModel,navController: NavHostController) {
     composable(

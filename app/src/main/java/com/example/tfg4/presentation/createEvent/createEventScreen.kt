@@ -1,6 +1,7 @@
 package com.example.tfg4.presentation.createEvent
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -54,6 +55,9 @@ import com.example.tfg4.Database.Controller
 import com.example.tfg4.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -131,13 +135,12 @@ Scaffold(
                 Row {
                     Button(
                         onClick = {
-                            if ( comprobarDatos(titulo,fecha,context)) {
+                            if ( comprobarDatos(titulo,fecha,hora.value,context)) {
 
-                                //Se añaden los datos a la base de datos
-
-                                    c.crearEvento(titulo, fecha,hora.value, descripcion)
+                                //Se añaden los datos a la base de datos y se vulve a la pantalla principal
+                                c.crearEvento(titulo, fecha,hora.value, descripcion){eventId ->
                                     navController.navigate(Destinations.Home.route)
-
+                                }
                             }
                         }
                     ) {
@@ -214,10 +217,8 @@ Scaffold(
                         label = { Text("Fecha") },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
-                            .clickable {
-                                mDatePickerDialog.show()
-                            },
+                            .weight(1f),
+                        enabled = false
                     )
                 }
 
@@ -271,7 +272,8 @@ Scaffold(
                         label = { Text("Hora") },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
+                            .weight(1f),
+                        enabled = false
                     )
                 }
 
@@ -283,11 +285,14 @@ Scaffold(
 
 
 
+@SuppressLint("SimpleDateFormat")
 @RequiresApi(Build.VERSION_CODES.N)
 fun comprobarFecha(fecha :String, context : Context) : Boolean {
 
     val regex = Regex("""\d{2}/\d{2}/\d{4}""")
 
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+    val fechaDate: Date = dateFormat.parse(fecha) as Date
 
     if (fecha.isBlank() or fecha.isEmpty()) {
         Toast.makeText(context, "Debes introducir una fecha", Toast.LENGTH_SHORT).show()
@@ -298,9 +303,16 @@ fun comprobarFecha(fecha :String, context : Context) : Boolean {
         return false
     } else if (regex.matches(fecha)) {
 
-        if(validarFecha(fecha,"dd/mm/yyyy")) {
+        if(validarFecha(fecha,"dd/MM/yyyy")) {
+            if(fechaDate > Date()) {
+                return true
+            }
+            else{
+                Toast.makeText(context, "Fecha debe ser de mañana en adelante", Toast.LENGTH_LONG)
+                    .show()
+                return false
+            }
 
-            return true
         }
         else{
             Toast.makeText(context, "Fecha inválida", Toast.LENGTH_LONG)
@@ -309,11 +321,12 @@ fun comprobarFecha(fecha :String, context : Context) : Boolean {
         }
 
     }
-    Toast.makeText(context, "Error", Toast.LENGTH_LONG)
+    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
         return false
 
 }
 
+@SuppressLint("SimpleDateFormat")
 fun validarFecha(fecha: String, formato: String): Boolean {
     val sdf = SimpleDateFormat(formato)
     sdf.isLenient = false // Configurar la comprobación estricta de la fecha
@@ -326,10 +339,11 @@ fun validarFecha(fecha: String, formato: String): Boolean {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.N)
-fun comprobarDatos(titulo:String, fecha:String, context:Context):Boolean{
 
-    if ( titulo.isNotBlank() && titulo.isNotEmpty()  && comprobarFecha(fecha, context)) {
+@RequiresApi(Build.VERSION_CODES.N)
+fun comprobarDatos(titulo:String, fecha:String, hora: String, context:Context):Boolean{
+
+    if ( titulo.isNotBlank() && titulo.isNotEmpty()  && comprobarFecha(fecha, context) && hora.isNotEmpty() && hora.isNotBlank()) {
 
         if( titulo.length > 20) {
 
@@ -341,23 +355,32 @@ fun comprobarDatos(titulo:String, fecha:String, context:Context):Boolean{
                 .show()
 
             return false
-        }else {
+        }
+
+        else {
             Toast.makeText(context, "Evento creado", Toast.LENGTH_LONG)
                 .show()
 
             return true
         }
     }
-    else if( titulo.isBlank() || titulo.isEmpty()  && comprobarFecha(fecha, context)) {
+    else if( titulo.isBlank() || titulo.isEmpty()  && comprobarFecha(fecha, context) && hora.isNotEmpty() && hora.isNotBlank()) {
 
         Toast.makeText(context, " 'Titulo' no puede estar vacio", Toast.LENGTH_LONG)
             .show()
 
         return false
     }
-    else if( titulo.isNotBlank() && titulo.isNotEmpty()  && !comprobarFecha(fecha, context))
+    else if( titulo.isNotBlank() && titulo.isNotEmpty()  && !comprobarFecha(fecha, context)) {
 
         return false
+    }
+    else if( titulo.isNotBlank() && titulo.isNotEmpty()  && comprobarFecha(fecha, context) && hora.isEmpty() || hora.isBlank()) {
+
+        Toast.makeText(context, " 'Hora' no puede estar vacio", Toast.LENGTH_LONG)
+            .show()
+        return false
+    }
 
     else {
 
