@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -22,22 +21,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tfg4.Database.Controller
 import com.example.tfg4.Database.Eventos
 import com.example.tfg4.R
 import com.example.tfg4.Utilities.DiferenciaEntreFechaActual
-import dev.leonardom.loginjetpackcompose.navigation.Destinations
-import io.grpc.Context
+import com.example.tfg4.navigation.Destinations
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,7 +67,10 @@ fun principal(
 
        floatingActionButton = {bottomCreateEvent(modifier = Modifier, navController)},
         //Barra de botones de navegacion
-        bottomBar = { BottomNavigation() }
+        bottomBar = {
+
+            BottomNavigation(modifier = Modifier,navController)
+        }
 
     ) {
 
@@ -241,7 +238,7 @@ private fun bottomCreateEvent(modifier: Modifier = Modifier,navController:NavHos
 
 
 @Composable
-private fun BottomNavigation(modifier: Modifier = Modifier) {
+private fun BottomNavigation(modifier: Modifier = Modifier, navController:NavHostController) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.background,
         modifier = modifier
@@ -276,6 +273,8 @@ private fun BottomNavigation(modifier: Modifier = Modifier) {
             selected = false,
             onClick = {
                 //Falta meter navegacion
+
+                navController.navigate(Destinations.perfil.route)
 
 
 

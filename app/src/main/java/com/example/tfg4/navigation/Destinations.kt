@@ -1,8 +1,6 @@
-package dev.leonardom.loginjetpackcompose.navigation
+package com.example.tfg4.navigation
 
-import androidx.navigation.NavType
 import androidx.navigation.compose.NamedNavArgument
-import androidx.navigation.compose.navArgument
 
 sealed class Destinations(
     val route: String,
@@ -13,5 +11,6 @@ sealed class Destinations(
     object Register: Destinations("register", emptyList())
     object Home: Destinations("home", emptyList())
     object CreateEvent :Destinations("createEvent", emptyList())
+    object perfil :Destinations("perfil", emptyList())
 
 }

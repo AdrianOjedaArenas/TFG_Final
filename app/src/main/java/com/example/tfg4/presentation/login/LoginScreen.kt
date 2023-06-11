@@ -39,10 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import com.example.tfg4.R
+import com.example.tfg4.navigation.Destinations
 import com.example.tfg4.presentation.components.EventDialog
 import com.example.tfg4.presentation.components.RoundedButton
 import com.example.tfg4.presentation.components.TransparentTextField
-import dev.leonardom.loginjetpackcompose.navigation.Destinations
 
 @Composable
 fun LoginScreen(
@@ -64,7 +64,7 @@ fun LoginScreen(
             .background(MaterialTheme.colors.background)
     ){
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = R.drawable.logo_grouping_grande),
             contentDescription = "Login Image",
             contentScale = ContentScale.Inside
         )

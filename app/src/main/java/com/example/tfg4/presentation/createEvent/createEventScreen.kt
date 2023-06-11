@@ -11,7 +11,6 @@ import android.os.Build
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -24,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import dev.leonardom.loginjetpackcompose.navigation.Destinations
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.material.Text
@@ -37,7 +35,6 @@ import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.icons.filled.AccessTime
@@ -45,19 +42,11 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.fontResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.tfg4.Database.Controller
 import com.example.tfg4.R
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.example.tfg4.navigation.Destinations
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

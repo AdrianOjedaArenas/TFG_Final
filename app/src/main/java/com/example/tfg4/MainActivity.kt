@@ -9,27 +9,26 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
-import com.example.tfg4.navigation.addCreateEvent
-import com.example.tfg4.navigation.addHome
-import com.example.tfg4.navigation.addLogin
-import com.example.tfg4.navigation.addRegister
+import androidx.lifecycle.ViewModelProvider
+import com.example.tfg4.navigation.*
 import com.example.tfg4.presentation.home.MainViewModel
+import com.example.tfg4.presentation.perfil.AuthViewModel
 import com.example.tfg4.ui.theme.TFG4Theme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
-import dev.leonardom.loginjetpackcompose.navigation.Destinations
 
 @ExperimentalAnimationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
      val mainViewModel: MainViewModel by viewModels()
+    private lateinit var authViewModel: AuthViewModel
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        authViewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
         setContent {
             TFG4Theme {
                 val navController = rememberAnimatedNavController()
@@ -46,6 +45,8 @@ class MainActivity : ComponentActivity() {
                         addHome(mainViewModel,navController)
 
                         addCreateEvent(navController)
+
+                        addPerfil(authViewModel,navController)
                     }
                 }
             }

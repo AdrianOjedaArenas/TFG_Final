@@ -6,7 +6,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -15,10 +14,11 @@ import com.example.tfg4.presentation.home.MainViewModel
 import com.example.tfg4.presentation.home.principal
 import com.example.tfg4.presentation.login.LoginScreen
 import com.example.tfg4.presentation.login.LoginViewModel
+import com.example.tfg4.presentation.perfil.AuthViewModel
+import com.example.tfg4.presentation.perfil.perfilScreen
 import com.example.tfg4.presentation.registration.RegisterViewModel
 import com.example.tfg4.presentation.registration.RegistrationScreen
 import com.google.accompanist.navigation.animation.composable
-import dev.leonardom.loginjetpackcompose.navigation.Destinations
 
 
 @ExperimentalAnimationApi
@@ -145,6 +145,20 @@ fun NavGraphBuilder.addCreateEvent(
     ) {
 
         createEventScreen(navController)
+
+    }
+}
+@RequiresApi(Build.VERSION_CODES.O)
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addPerfil(
+    authViewModel: AuthViewModel,
+    navController: NavHostController
+) {
+    composable(
+        route = Destinations.perfil.route
+    ) {
+
+        perfilScreen(authViewModel,navController)
 
     }
 }
