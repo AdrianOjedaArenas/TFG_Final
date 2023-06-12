@@ -22,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-     val mainViewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
     private lateinit var authViewModel: AuthViewModel
 
     @RequiresApi(Build.VERSION_CODES.O)
