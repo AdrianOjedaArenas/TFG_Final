@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TFG</string>
+    <string name="app_name">Grouping</string>
     <string name="error_input_empty">The fields must not be empty</string>
     <string name="error_not_a_valid_email">Please enter a valid E-Mail</string>
     <string name="error_not_a_valid_phone_number">Please enter a valid phone number</string>
