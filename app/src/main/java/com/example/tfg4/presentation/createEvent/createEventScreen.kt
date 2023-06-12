@@ -127,7 +127,7 @@ Scaffold(
                             if ( comprobarDatos(titulo,fecha,hora.value,context)) {
 
                                 //Se añaden los datos a la base de datos y se vulve a la pantalla principal
-                                c.crearEvento(titulo, fecha,hora.value, descripcion){eventId ->
+                                c.crearEvento(titulo, fecha,hora.value, descripcion){
                                     navController.navigate(Destinations.Home.route)
                                 }
                             }
@@ -272,27 +272,19 @@ Scaffold(
 
 }
 
-
-
-@SuppressLint("SimpleDateFormat")
 @RequiresApi(Build.VERSION_CODES.N)
 fun comprobarFecha(fecha :String, context : Context) : Boolean {
-
-    val regex = Regex("""\d{2}/\d{2}/\d{4}""")
-
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-    val fechaDate: Date = dateFormat.parse(fecha) as Date
 
     if (fecha.isBlank() or fecha.isEmpty()) {
         Toast.makeText(context, "Debes introducir una fecha", Toast.LENGTH_SHORT).show()
         return false
-    } else if (!regex.matches(fecha))  {
-        Toast.makeText(context, "El formato de fecha debe ser: DD/MM/YYYY", Toast.LENGTH_LONG)
-            .show()
-        return false
-    } else if (regex.matches(fecha)) {
+    }
+    else {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
 
-        if(validarFecha(fecha,"dd/MM/yyyy")) {
+        try {
+            val fechaDate: Date = dateFormat.parse(fecha) as Date
+
             if(fechaDate > Date()) {
                 return true
             }
@@ -302,17 +294,13 @@ fun comprobarFecha(fecha :String, context : Context) : Boolean {
                 return false
             }
 
-        }
-        else{
-            Toast.makeText(context, "Fecha inválida", Toast.LENGTH_LONG)
+        } catch (e: Exception) {
+            //Este error no deberia salir
+            Toast.makeText(context, "Error al parsear la fecha", Toast.LENGTH_LONG)
                 .show()
             return false
         }
-
     }
-    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
-        return false
-
 }
 
 @SuppressLint("SimpleDateFormat")
@@ -326,59 +314,6 @@ fun validarFecha(fecha: String, formato: String): Boolean {
     } catch (e: Exception) {
         false // La fecha es inválida
     }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.N)
-fun comprobarDatos(titulo:String, fecha:String, hora: String, context:Context):Boolean{
-
-    if ( titulo.isNotBlank() && titulo.isNotEmpty()  && comprobarFecha(fecha, context) && hora.isNotEmpty() && hora.isNotBlank()) {
-
-        if( titulo.length > 20) {
-
-            Toast.makeText(
-                context,
-                " El 'Titulo no puede contener mas de 20 caracteres",
-                Toast.LENGTH_LONG
-            )
-                .show()
-
-            return false
-        }
-
-        else {
-            Toast.makeText(context, "Evento creado", Toast.LENGTH_LONG)
-                .show()
-
-            return true
-        }
-    }
-    else if( titulo.isBlank() || titulo.isEmpty()  && comprobarFecha(fecha, context) && hora.isNotEmpty() && hora.isNotBlank()) {
-
-        Toast.makeText(context, " 'Titulo' no puede estar vacio", Toast.LENGTH_LONG)
-            .show()
-
-        return false
-    }
-    else if( titulo.isNotBlank() && titulo.isNotEmpty()  && !comprobarFecha(fecha, context)) {
-
-        return false
-    }
-    else if( titulo.isNotBlank() && titulo.isNotEmpty()  && comprobarFecha(fecha, context) && hora.isEmpty() || hora.isBlank()) {
-
-        Toast.makeText(context, " 'Hora' no puede estar vacio", Toast.LENGTH_LONG)
-            .show()
-        return false
-    }
-
-    else {
-
-        Toast.makeText(context, " ERROR", Toast.LENGTH_LONG)
-            .show()
-
-        return false
-    }
-
 }
 
 
@@ -446,6 +381,40 @@ private fun showTimePickerDialog(context: Context, hora: MutableState<String>) {
     )
 
     timePicker.show()
+}
+
+
+
+@RequiresApi(Build.VERSION_CODES.N)
+fun comprobarDatos(titulo:String, fecha:String, hora: String, context:Context):Boolean{
+
+   if(!comprobarFecha(fecha, context)){
+       return false
+
+   }
+    else if(hora.isEmpty() || hora.isBlank()){
+
+       Toast.makeText(context, " 'Hora' no puede estar vacio", Toast.LENGTH_LONG)
+           .show()
+       return false
+   }
+    else if(titulo.isBlank() || titulo.isEmpty()){
+       Toast.makeText(context, " 'Título' no puede estar vacio", Toast.LENGTH_LONG)
+           .show()
+       return false
+
+   }
+    else if( titulo.length > 20 ) {
+
+        Toast.makeText(
+            context," El 'Titulo no puede contener mas de 20 caracteres",Toast.LENGTH_LONG)
+            .show()
+
+        return false
+   }
+    else{
+        return true
+   }
 }
 
 
