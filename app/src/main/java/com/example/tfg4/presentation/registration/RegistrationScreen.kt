@@ -1,5 +1,6 @@
 package com.example.tfg4.presentation.registration
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -26,21 +28,25 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.tfg4.presentation.components.EventDialog
 import com.example.tfg4.presentation.components.RoundedButton
 import com.example.tfg4.presentation.components.SocialMediaButton
 import com.example.tfg4.presentation.components.TransparentTextField
 import com.example.tfg4.ui.theme.FACEBOOKCOLOR
 import com.example.tfg4.ui.theme.GMAILCOLOR
+import kotlin.coroutines.coroutineContext
 
 @Composable
 fun RegistrationScreen(
     state: RegisterState,
-    onRegister: (String,String, String) -> Unit,
+    onRegister: (String, String, String, Context, (Boolean) ->Unit) -> Unit,
     onBack: () -> Unit,
-    onDismissDialog: () -> Unit
+    onDismissDialog: () -> Unit,
+    navController: NavHostController
 ) {
 
+    val context = LocalContext.current
     val emailValue = remember { mutableStateOf("") }
     val passwordValue = remember { mutableStateOf("") }
     val confirmPasswordValue = remember { mutableStateOf("") }
@@ -131,11 +137,18 @@ fun RegistrationScreen(
                         onDone = {
                             focusManager.clearFocus()
 
-                            onRegister(
-                                emailValue.value,
-                                passwordValue.value,
-                                confirmPasswordValue.value
-                            )
+                            onRegister(emailValue.value, passwordValue.value, confirmPasswordValue.value, context){success ->
+                                    if (success){
+                                        navController.navigate(
+                                            com.example.tfg4.navigation.Destinations.Login.route
+                                        ) {
+                                            popUpTo(com.example.tfg4.navigation.Destinations.Login.route) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+
+                                }
                         }
                     ),
                     imeAction = ImeAction.Done,
@@ -160,11 +173,17 @@ fun RegistrationScreen(
                     text = "Sign Up",
                     displayProgressBar = state.displayProgressBar,
                     onClick = {
-                        onRegister(
-                            emailValue.value,
-                            passwordValue.value,
-                            confirmPasswordValue.value
-                        )
+                        onRegister(emailValue.value, passwordValue.value, confirmPasswordValue.value, context){success ->
+                            if (success){
+                                navController.navigate(
+                                    com.example.tfg4.navigation.Destinations.Login.route
+                                ) {
+                                    popUpTo(com.example.tfg4.navigation.Destinations.Login.route) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }
                     }
                 )
 

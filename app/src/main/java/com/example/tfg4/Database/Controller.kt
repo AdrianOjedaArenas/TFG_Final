@@ -76,7 +76,6 @@ class Controller{
                 callback(emptyList())
             }
 
-
     }
 
     fun getAllEventos(callback: (List<Eventos>) -> Unit) {

@@ -12,5 +12,6 @@ sealed class Destinations(
     object Home: Destinations("home", emptyList())
     object CreateEvent :Destinations("createEvent", emptyList())
     object perfil :Destinations("perfil", emptyList())
+    object EventDetailsScreen :Destinations("EventDetailsScreen", emptyList())
 
 }

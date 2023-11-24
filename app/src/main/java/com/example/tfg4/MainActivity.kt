@@ -47,6 +47,8 @@ class MainActivity : ComponentActivity() {
                         addCreateEvent(navController)
 
                         addPerfil(authViewModel,navController)
+
+                        addDetails(navController)
                     }
                 }
             }

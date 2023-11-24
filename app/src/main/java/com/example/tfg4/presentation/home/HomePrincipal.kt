@@ -3,9 +3,11 @@ package com.example.tfg4.presentation.home
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.service.autofill.OnClickAction
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,6 +33,7 @@ import com.example.tfg4.Database.Controller
 import com.example.tfg4.Database.Eventos
 import com.example.tfg4.R
 import com.example.tfg4.Utilities.DiferenciaEntreFechaActual
+import com.example.tfg4.Utilities.ExtraEvento
 import com.example.tfg4.navigation.Destinations
 import java.text.SimpleDateFormat
 import java.util.*
@@ -75,11 +78,11 @@ fun principal(
     ) {
 
         if(searchTextState.isBlank() ||searchTextState.isEmpty())
-            EventList()
+            EventList(navController)
         else
             //Arreglar
             //La lista aparece vacia pero deberia aparecer con los datos filtrados
-            FilteredEventList(searchTextState)
+            FilteredEventList(searchTextState,navController)
 
 
     }
@@ -87,21 +90,25 @@ fun principal(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MessageCard(evento :Eventos) {
+fun MessageCard(evento :Eventos,navController: NavHostController) {
 
     val dateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     val formattedDate : String? = evento.fecha?.let { dateFormat.format(it) }
 
-
     // Add padding around our message
-    Row(modifier = Modifier.padding(all = 10.dp)) {
+    Row(
+        modifier = Modifier.padding(all = 10.dp)
+        .clickable {
+
+                navController.navigate(Destinations.EventDetailsScreen.route, navigatorExtras = ExtraEvento(evento))
+
+         }
+    ) {
         Image(
            painter = painterResource(R.drawable.logo_grouping),
             contentDescription = "Contact profile picture",
             modifier = Modifier
-                // Set image size to 40 dp
                 .size(50.dp)
-                // Clip image to be shaped as a circle
                 .clip(CircleShape)
         )
 
@@ -177,7 +184,7 @@ fun MessageCard(evento :Eventos) {
 //Lista de eventos
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun EventList() {
+fun EventList(navController: NavHostController) {
     val c = Controller()
     val eventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
 
@@ -189,13 +196,13 @@ fun EventList() {
 
     LazyColumn {
         items(eventosListState.value) { evento ->
-            MessageCard(evento)
+            MessageCard(evento, navController )
         }
     }
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FilteredEventList(searchTextState:String) {
+fun FilteredEventList(searchTextState:String,navController: NavHostController) {
     val c = Controller()
     val filteredEventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
 
@@ -207,7 +214,7 @@ fun FilteredEventList(searchTextState:String) {
 
     LazyColumn {
         items(filteredEventosListState.value) { evento ->
-            MessageCard(evento)
+            MessageCard(evento, navController)
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import com.example.tfg4.presentation.EventDetails.DetailsScreen
 import com.example.tfg4.presentation.createEvent.createEventScreen
 import com.example.tfg4.presentation.home.MainViewModel
 import com.example.tfg4.presentation.home.principal
@@ -118,7 +119,8 @@ fun NavGraphBuilder.addRegister(
             onBack = {
                 navController.popBackStack()
             },
-            onDismissDialog = viewModel::hideErrorDialog
+            onDismissDialog = viewModel::hideErrorDialog,
+            navController
         )
     }
 }
@@ -161,4 +163,18 @@ fun NavGraphBuilder.addPerfil(
         perfilScreen(authViewModel,navController)
 
     }
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addDetails(
+    navController: NavHostController
+) {
+    composable(
+        route = Destinations.EventDetailsScreen.route
+    ) {
+
+        DetailsScreen(navController)
+
+    }
+
 }
