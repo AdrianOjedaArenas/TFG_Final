@@ -28,12 +28,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tfg4.Database.Controller
 import com.example.tfg4.Database.Eventos
 import com.example.tfg4.R
 import com.example.tfg4.Utilities.DiferenciaEntreFechaActual
-import com.example.tfg4.Utilities.ExtraEvento
+import com.example.tfg4.Utilities.SharedViewModelEvento
 import com.example.tfg4.navigation.Destinations
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,7 +43,8 @@ import java.util.*
 @Composable
 fun principal(
      mainViewModel:MainViewModel,
-     navController: NavHostController
+     navController: NavHostController,
+     sharedViewModelEvento: SharedViewModelEvento
 ){
     val searchWidgetState by mainViewModel.searchWidgetState
     val searchTextState by mainViewModel.searchTextState
@@ -77,12 +79,12 @@ fun principal(
 
     ) {
 
-        if(searchTextState.isBlank() ||searchTextState.isEmpty())
-            EventList(navController)
+        if(searchTextState.isBlank() || searchTextState.isEmpty())
+            EventList(navController,sharedViewModelEvento)
         else
             //Arreglar
             //La lista aparece vacia pero deberia aparecer con los datos filtrados
-            FilteredEventList(searchTextState,navController)
+            FilteredEventList(searchTextState,navController,sharedViewModelEvento)
 
 
     }
@@ -90,7 +92,7 @@ fun principal(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MessageCard(evento :Eventos,navController: NavHostController) {
+fun MessageCard(evento :Eventos,navController: NavHostController,sharedViewModelEvento : SharedViewModelEvento) {
 
     val dateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     val formattedDate : String? = evento.fecha?.let { dateFormat.format(it) }
@@ -100,7 +102,8 @@ fun MessageCard(evento :Eventos,navController: NavHostController) {
         modifier = Modifier.padding(all = 10.dp)
         .clickable {
 
-                navController.navigate(Destinations.EventDetailsScreen.route, navigatorExtras = ExtraEvento(evento))
+            sharedViewModelEvento.setEvento(evento)
+            navController.navigate(Destinations.EventDetailsScreen.route)
 
          }
     ) {
@@ -184,7 +187,7 @@ fun MessageCard(evento :Eventos,navController: NavHostController) {
 //Lista de eventos
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun EventList(navController: NavHostController) {
+fun EventList(navController: NavHostController,sharedViewModelEvento: SharedViewModelEvento) {
     val c = Controller()
     val eventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
 
@@ -196,13 +199,13 @@ fun EventList(navController: NavHostController) {
 
     LazyColumn {
         items(eventosListState.value) { evento ->
-            MessageCard(evento, navController )
+            MessageCard(evento, navController,sharedViewModelEvento)
         }
     }
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FilteredEventList(searchTextState:String,navController: NavHostController) {
+fun FilteredEventList(searchTextState:String,navController: NavHostController,sharedViewModelEvento: SharedViewModelEvento) {
     val c = Controller()
     val filteredEventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
 
@@ -214,7 +217,7 @@ fun FilteredEventList(searchTextState:String,navController: NavHostController) {
 
     LazyColumn {
         items(filteredEventosListState.value) { evento ->
-            MessageCard(evento, navController)
+            MessageCard(evento, navController,sharedViewModelEvento)
         }
     }
 }

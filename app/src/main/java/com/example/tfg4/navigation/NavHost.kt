@@ -9,6 +9,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import com.example.tfg4.Utilities.SharedViewModelEvento
 import com.example.tfg4.presentation.EventDetails.DetailsScreen
 import com.example.tfg4.presentation.createEvent.createEventScreen
 import com.example.tfg4.presentation.home.MainViewModel
@@ -127,12 +128,12 @@ fun NavGraphBuilder.addRegister(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addHome(mainViewModel: MainViewModel,navController: NavHostController) {
+fun NavGraphBuilder.addHome(mainViewModel: MainViewModel,navController: NavHostController,sharedViewModel: SharedViewModelEvento) {
     composable(
         route = Destinations.Home.route
     ) {
 
-        principal(mainViewModel,navController)
+        principal(mainViewModel,navController,sharedViewModel)
 
     }
 }
@@ -167,13 +168,14 @@ fun NavGraphBuilder.addPerfil(
 
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addDetails(
-    navController: NavHostController
+    navController: NavHostController,
+    sharedViewModel: SharedViewModelEvento
 ) {
     composable(
         route = Destinations.EventDetailsScreen.route
     ) {
 
-        DetailsScreen(navController)
+        DetailsScreen(navController,sharedViewModel)
 
     }
 

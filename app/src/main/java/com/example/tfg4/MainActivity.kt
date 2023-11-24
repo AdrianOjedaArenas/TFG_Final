@@ -10,6 +10,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tfg4.Utilities.SharedViewModelEvento
 import com.example.tfg4.navigation.*
 import com.example.tfg4.presentation.home.MainViewModel
 import com.example.tfg4.presentation.perfil.AuthViewModel
@@ -23,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
+    private val sharedViewModel: SharedViewModelEvento by viewModels()
     private lateinit var authViewModel: AuthViewModel
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -42,13 +45,13 @@ class MainActivity : ComponentActivity() {
 
                         addRegister(navController)
 
-                        addHome(mainViewModel,navController)
+                        addHome(mainViewModel,navController,sharedViewModel)
 
                         addCreateEvent(navController)
 
                         addPerfil(authViewModel,navController)
 
-                        addDetails(navController)
+                        addDetails(navController,sharedViewModel)
                     }
                 }
             }
