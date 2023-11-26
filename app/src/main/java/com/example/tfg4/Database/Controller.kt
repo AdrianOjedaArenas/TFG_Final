@@ -5,10 +5,10 @@ import android.content.ContentValues.TAG
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.ImageBitmap
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -19,7 +19,7 @@ class Controller{
 
      @RequiresApi(Build.VERSION_CODES.O)
      @SuppressLint("SimpleDateFormat")
-     fun crearEvento(titulo: String, fecha: String, hora: String, descripcion: String, callback: (String) -> Unit) {
+     fun crearEvento(imagen: ImageBitmap?, titulo: String, fecha: String, hora: String, descripcion: String, callback: (String) -> Unit) {
 
          val dateFormat = SimpleDateFormat("dd/MM/yyyy")
          val fechaDate: Date = dateFormat.parse(fecha) as Date
@@ -29,6 +29,7 @@ class Controller{
 
          val evento = Eventos(
              "",
+             imagen,
              titulo,
              fechaDate,
              horaLocalTimeStr,

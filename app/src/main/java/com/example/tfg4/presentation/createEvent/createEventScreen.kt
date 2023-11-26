@@ -34,7 +34,6 @@ import android.content.Intent
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.icons.filled.AccessTime
@@ -60,6 +59,7 @@ fun createEventScreen(navController: NavHostController){
     var fecha by remember{ mutableStateOf("") }
     var descripcion by remember{ mutableStateOf("") }
     val hora = remember { mutableStateOf("") }
+    var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }
 
     //Calendario
 
@@ -126,8 +126,8 @@ Scaffold(
                         onClick = {
                             if ( comprobarDatos(titulo,fecha,hora.value,context)) {
 
-                                //Se añaden los datos a la base de datos y se vulve a la pantalla principal
-                                c.crearEvento(titulo, fecha,hora.value, descripcion){
+                                //Se añaden los datos a la base de datos y se vuelve a la pantalla principal
+                                c.crearEvento(selectedImage,titulo, fecha,hora.value, descripcion){
                                     navController.navigate(Destinations.Home.route)
                                 }
                             }
@@ -148,7 +148,11 @@ Scaffold(
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
-                AddImageButton(context, modifier = Modifier.align(Alignment.CenterHorizontally))
+                AddImageButton(
+                    context,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    onImageSelected = { imageBitmap -> selectedImage = imageBitmap }
+                )
 
                 Spacer(modifier = Modifier.size(8.dp))
 
@@ -318,10 +322,10 @@ fun validarFecha(fecha: String, formato: String): Boolean {
 
 
 @Composable
-fun AddImageButton(context:Context, modifier:Modifier) {
+fun AddImageButton(context:Context, modifier:Modifier,onImageSelected: (ImageBitmap?) -> Unit) {
     val colorPurple = colorResource(id = R.color.purple_200)
 
-    val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
+
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -330,37 +334,30 @@ fun AddImageButton(context:Context, modifier:Modifier) {
             if (uri != null) {
                 val inputStream = context.contentResolver.openInputStream(uri)
                 val bitmap = BitmapFactory.decodeStream(inputStream)
-                imageBitmap.value = bitmap.asImageBitmap()
+                onImageSelected(bitmap.asImageBitmap())
             }
         }
     }
 
     Column (
         modifier = modifier
-            ){
-        if (imageBitmap.value != null) {
-            Image(
-                bitmap = imageBitmap.value!!,
-                contentDescription = "Selected Image",
-                modifier = Modifier.size(200.dp)
-            )
-        } else {
+    ){
 
-            FloatingActionButton(
-                backgroundColor = colorPurple,
-                onClick = {
-                    val intent =
-                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    pickImageLauncher.launch(intent)
-                }
-            ) {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = Icons.Default.Image,
-                    contentDescription = "Calendar Icon",
-                    tint = Color.White
-                )
+        FloatingActionButton(
+            backgroundColor = colorPurple,
+            onClick = {
+                // Abrir la galería para seleccionar una imagen
+                val intent =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                pickImageLauncher.launch(intent)
             }
+        ) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.Default.Image,
+                contentDescription = "Calendar Icon",
+                tint = Color.White
+            )
         }
     }
 }
