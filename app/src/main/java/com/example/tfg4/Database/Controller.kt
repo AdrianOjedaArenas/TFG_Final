@@ -2,12 +2,16 @@ package com.example.tfg4.Database
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
+import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -27,34 +31,44 @@ class Controller{
          val horaLocalTime :LocalTime = LocalTime.parse(hora,formatterHora)
          val horaLocalTimeStr :String = horaLocalTime.toString()
 
-         val evento = Eventos(
-             "",
-             imagen,
-             titulo,
-             fechaDate,
-             horaLocalTimeStr,
-             descripcion
-         )
+         subirImagenAFirebaseStorage(imagen) { imagenUrl ->
 
-         db.collection("eventos")
-             .add(evento)
-             .addOnSuccessListener { documentReference ->
-                  val documentId = documentReference.id
-                 // Aquí puedes utilizar el ID del documento como lo necesites
-                 evento.id = documentId
+             val evento = Eventos(
+                 "",
+                 imagenUrl,
+                 titulo,
+                 fechaDate,
+                 horaLocalTimeStr,
+                 descripcion
+             )
 
-                 //actualizamos el documento con la id que se acaba de crear automaticamente
-                 documentReference.update("id",documentId)
-                     .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
-                     .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+             db.collection("eventos")
+                 .add(evento)
+                 .addOnSuccessListener { documentReference ->
+                     val documentId = documentReference.id
+                     // Aquí puedes utilizar el ID del documento como lo necesites
+                     evento.id = documentId
 
-                 Log.d(TAG, "Documento creado con ID: $documentId")
-                 callback(documentId)
-             }
-             .addOnFailureListener { e ->
-                 Log.w(TAG, "Error al crear el documento", e)
-                 callback(null.toString())
-             }
+                     //actualizamos el documento con la id que se acaba de crear automaticamente
+                     documentReference.update("id", documentId)
+                         .addOnSuccessListener {
+                             Log.d(
+                                 TAG,
+                                 "DocumentSnapshot successfully updated!"
+                             )
+                         }
+                         .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+
+                     Log.d(TAG, "Documento creado con ID: $documentId")
+
+                     callback(documentId)
+                 }
+                 .addOnFailureListener { e ->
+
+                     Log.w(TAG, "Error al crear el documento", e)
+                     callback(null.toString())
+                 }
+         }
 
      }
 
@@ -105,9 +119,7 @@ class Controller{
             .addOnFailureListener { exception ->
                 Log.d(TAG, "Error al eliminar el evento: $exception")
             }
-
     }
-
 
      fun crearUser(email:String,password:String) {
 
@@ -134,6 +146,38 @@ class Controller{
         }
 
         return lista
+    }
+
+// Funcion para subir la imagen a Firebase Storage
+
+    fun subirImagenAFirebaseStorage(imagen: ImageBitmap?, onImageUrlReady: (String) -> Unit) {
+        if (imagen != null) {
+            val storageRef = FirebaseStorage.getInstance().reference
+            val imageName = "image_" + System.currentTimeMillis() + ".jpg"
+            val imageRef = storageRef.child("imagenes/$imageName")
+
+            // Convertir ImageBitmap a ByteArray
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            imagen.asAndroidBitmap().compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            val byteArray = byteArrayOutputStream.toByteArray()
+
+            // Subir la imagen a Firebase Storage
+            imageRef.putBytes(byteArray)
+                .addOnSuccessListener { taskSnapshot ->
+                    // Obtener la URL de descarga de la imagen
+                    imageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val imageUrl = uri.toString()
+                        onImageUrlReady(imageUrl)
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // Manejar errores durante la subida de la imagen
+                    exception.printStackTrace()
+                    onImageUrlReady("") // Envía una URL vacía en caso de error
+                }
+        } else {
+            onImageUrlReady("") // Envía una URL vacía si la imagen es nula
+        }
     }
 
 }

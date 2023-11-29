@@ -11,7 +11,7 @@ import java.util.*
 data class Eventos(
 
     var id:String? = null,
-    var imagen: ImageBitmap? = null,
+    val imagen: String? = null,
     val titulo: String? = null,
     val fecha: Date? = null,
     val hora: String? = null,

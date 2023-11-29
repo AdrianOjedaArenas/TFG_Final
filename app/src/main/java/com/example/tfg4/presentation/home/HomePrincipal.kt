@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.ImageLoader
+import coil.compose.rememberImagePainter
 import com.example.tfg4.Database.Controller
 import com.example.tfg4.Database.Eventos
 import com.example.tfg4.R
@@ -108,7 +111,11 @@ fun MessageCard(evento :Eventos,navController: NavHostController,sharedViewModel
          }
     ) {
         Image(
-           painter = painterResource(R.drawable.logo_grouping),
+           painter = rememberImagePainter(
+               data = evento.imagen,
+               imageLoader = ImageLoader.Builder(LocalContext.current)
+                   .build()
+           ),
             contentDescription = "Contact profile picture",
             modifier = Modifier
                 .size(50.dp)

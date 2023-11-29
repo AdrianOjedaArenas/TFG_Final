@@ -1,16 +1,22 @@
 package com.example.tfg4.presentation.EventDetails
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.ImageLoader
+import coil.compose.rememberImagePainter
 import com.example.tfg4.Utilities.SharedViewModelEvento
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,6 +37,17 @@ fun DetailsScreen(
             .padding(16.dp)
     ) {
         // Mostrar la foto en grande
+        Image(
+            painter = rememberImagePainter(
+                data = evento?.imagen,
+                imageLoader = ImageLoader.Builder(LocalContext.current)
+                    .build()
+            ),
+            contentDescription = "Contact profile picture",
+            modifier = Modifier
+                .size(400.dp)
+                .clip(CircleShape)
+        )
 
         Spacer(modifier = Modifier.size(16.dp))
 
