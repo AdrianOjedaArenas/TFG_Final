@@ -50,7 +50,10 @@ fun principal(
      sharedViewModelEvento: SharedViewModelEvento
 ){
     val searchWidgetState by mainViewModel.searchWidgetState
-    val searchTextState by mainViewModel.searchTextState
+    //val searchTextState by mainViewModel.searchTextState
+
+    var searchTextState by remember { mutableStateOf("") }
+
     Scaffold(
         //Barra de busqueda
         topBar = {
@@ -58,7 +61,8 @@ fun principal(
                 searchWidgetState = searchWidgetState,
                 searchTextState = searchTextState,
                 onTextChange = {
-                    mainViewModel.updateSearchTextState(newValue = it)
+                               newText -> run { searchTextState = newText }
+                    //mainViewModel.updateSearchTextState(newValue = it)
                 },
                 onCloseClicked = {
                     mainViewModel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
@@ -81,7 +85,6 @@ fun principal(
         }
 
     ) {
-
         if(searchTextState.isBlank() || searchTextState.isEmpty())
             EventList(navController,sharedViewModelEvento)
         else
@@ -102,13 +105,14 @@ fun MessageCard(evento :Eventos,navController: NavHostController,sharedViewModel
 
     // Add padding around our message
     Row(
-        modifier = Modifier.padding(all = 10.dp)
-        .clickable {
+        modifier = Modifier
+            .padding(all = 10.dp)
+            .clickable {
 
-            sharedViewModelEvento.setEvento(evento)
-            navController.navigate(Destinations.EventDetailsScreen.route)
+                sharedViewModelEvento.setEvento(evento)
+                navController.navigate(Destinations.EventDetailsScreen.route)
 
-         }
+            }
     ) {
         Image(
            painter = rememberImagePainter(
@@ -216,10 +220,8 @@ fun FilteredEventList(searchTextState:String,navController: NavHostController,sh
     val c = Controller()
     val filteredEventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
 
-    LaunchedEffect(Unit) {
-        c.getEvento(searchTextState) { eventosList ->
+    c.getEvento(searchTextState) { eventosList ->
             filteredEventosListState.value = eventosList
-        }
     }
 
     LazyColumn {

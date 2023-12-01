@@ -74,8 +74,7 @@ class Controller{
 
     fun getEvento(searchText :String,callback: (List<Eventos>) -> Unit){
 
-        db.collection("eventos")
-            .whereEqualTo("titulo", searchText)
+        db.collection("eventos").whereEqualTo("titulo", searchText)
             .get()
             .addOnSuccessListener { documents ->
                 val filteredEvents = mutableListOf<Eventos>() // Lista para almacenar eventos filtrados

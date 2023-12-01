@@ -42,7 +42,7 @@ fun DetailsScreen(
 
     val evento = sharedViewModel.evento.value
 
-    val inscrito : Boolean by remember { mutableStateOf() }
+    //val inscrito : Boolean by remember { mutableStateOf() }
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     Scaffold(
@@ -139,11 +139,15 @@ fun DetailsScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(4.dp)
-                                .clickable(enabled = !inscrito){
+                                    /*
+                                .clickable(enabled = !inscrito)
+                                {
 
                                     evento.id?.let { it1 -> c.crearEventoUsuario(user!!.uid, it1) }
 
                                 }
+
+                                     */
                         ) {
                             Text(text = "Unirse")
                         }
@@ -153,11 +157,14 @@ fun DetailsScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(4.dp)
+                                    /*
                                 .clickable(enabled = inscrito){
 
                                     //evento.id?.let { it1 -> c.crearEventoUsuario(user!!.uid, it1) }
 
                                 }
+                                
+                                     */
                         ) {
                             Text(text = "Quitarse")
                         }
