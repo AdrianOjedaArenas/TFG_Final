@@ -123,6 +123,8 @@ class Controller{
 
      fun crearUser(email:String,password:String) {
 
+         val user = Users(email,password)
+
         db.collection("usuarios").document(email).set(
                 hashMapOf(
                     "Email" to email,
@@ -147,6 +149,23 @@ class Controller{
 
         return lista
     }
+
+    //Funcion para
+
+    fun crearEventoUsuario(idUsuario:String, idEvento: String ){
+
+        val id = "${idUsuario}-${idEvento}"
+
+        db.collection("EventoUsuario").document(id).set(
+            hashMapOf(
+                "Usuario" to idUsuario,
+                "Evento" to idEvento
+            )
+        )
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+    }
+
 
 // Funcion para subir la imagen a Firebase Storage
 

@@ -99,8 +99,8 @@ fun createEventScreen(navController: NavHostController){
         }, mYear, mMonth, mDay
     )
 
-
     //Fin calendario
+
 Scaffold(
     topBar = {
         TopAppBar(

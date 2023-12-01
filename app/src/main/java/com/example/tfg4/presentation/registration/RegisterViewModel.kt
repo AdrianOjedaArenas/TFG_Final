@@ -18,6 +18,8 @@ class RegisterViewModel: ViewModel() {
 
     val state: MutableState<RegisterState> = mutableStateOf(RegisterState())
 
+    val c = Controller()
+
     fun register(
         email: String,
         password: String,
@@ -37,7 +39,7 @@ class RegisterViewModel: ViewModel() {
 
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
-
+                    c.crearUser(email,password)
                     callback(true)
                 }
                 .addOnFailureListener { e ->
