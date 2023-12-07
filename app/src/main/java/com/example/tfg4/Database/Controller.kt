@@ -8,6 +8,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -111,6 +113,7 @@ class Controller{
     fun deleteEvento(eventId: String){
 
         val docRef = db.collection("eventos").document(eventId)
+
         docRef.delete()
             .addOnSuccessListener {
                 Log.d(TAG, "Evento eliminado correctamente")
@@ -149,7 +152,7 @@ class Controller{
         return lista
     }
 
-    //Funcion para
+    //Funcion para inscribirse a un evento
 
     fun crearEventoUsuario(idUsuario:String, idEvento: String ){
 
@@ -165,6 +168,36 @@ class Controller{
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 
+    // Funcion para comprobar si un usuario esta inscrito en un evento
+
+    fun comprobarInscrito(idUsuario: String?, idEvento: String?, callback: (Boolean) -> Unit) {
+        db.collection("EventoUsuario")
+            .whereEqualTo("Evento", idEvento)
+            .whereEqualTo("Usuario", idUsuario)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                callback(!querySnapshot.isEmpty)
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error al obtener los eventos especificados: ", exception)
+                callback(false)
+            }
+    }
+
+    // Funcion para eliminar una tupla de la tabala EventoUsuario
+    fun deleteEventoUsuario(idUsuario: String?, idEvento: String?){
+
+        val docRef = db.collection("EventoUsuario").document("${idUsuario}-${idEvento}")
+
+        docRef.delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "Evento eliminado correctamente")
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error al eliminar el evento: $exception")
+            }
+
+    }
 
 // Funcion para subir la imagen a Firebase Storage
 
