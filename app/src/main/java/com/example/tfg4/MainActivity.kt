@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
                         addCreateEvent(navController)
 
-                        addPerfil(authViewModel,navController)
+                        addPerfil(authViewModel,navController,sharedViewModel)
 
                         addDetails(navController,sharedViewModel)
                     }

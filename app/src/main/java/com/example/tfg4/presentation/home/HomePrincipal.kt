@@ -88,8 +88,7 @@ fun principal(
         if(searchTextState.isBlank() || searchTextState.isEmpty())
             EventList(navController,sharedViewModelEvento)
         else
-            //Arreglar
-            //La lista aparece vacia pero deberia aparecer con los datos filtrados
+            //Lista con los datos filtrados
             FilteredEventList(searchTextState,navController,sharedViewModelEvento)
 
 
@@ -202,11 +201,10 @@ fun EventList(navController: NavHostController,sharedViewModelEvento: SharedView
     val c = Controller()
     val eventosListState = remember { mutableStateOf(emptyList<Eventos>()) }
 
-        LaunchedEffect(Unit) {
-            c.getAllEventos { eventosList ->
-                eventosListState.value = eventosList
-            }
+        c.getAllEventos { eventosList ->
+            eventosListState.value = eventosList
         }
+
 
     LazyColumn {
         items(eventosListState.value) { evento ->

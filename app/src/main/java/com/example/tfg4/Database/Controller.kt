@@ -6,6 +6,8 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import com.google.firebase.firestore.DocumentReference
@@ -230,5 +232,67 @@ class Controller{
             onImageUrlReady("") // Envía una URL vacía si la imagen es nula
         }
     }
+
+    //Funcion para obtener una lista con todos los EventoUsuario de un usuario en concreto
+
+    fun listaEventoUsuario(idUsuario :String?,callback: (List<EventoUsuario>) -> Unit){
+
+        db.collection("EventoUsuario").whereEqualTo("idUsuario", idUsuario)
+            .get()
+            .addOnSuccessListener { documents ->
+                val listaHistorial = mutableListOf<EventoUsuario>()
+                for (document in documents) {
+                    val eventoUsuario = document.toObject(EventoUsuario::class.java)
+                    listaHistorial.add(eventoUsuario)
+                }
+                callback(listaHistorial)
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error al obtener los eventos especificados: ", exception)
+
+                callback(emptyList())
+            }
+
+    }
+
+    //Funcion para obtener el historial con todos los eventos de un usuario
+
+
+    fun historial(idUsuario:String?,callback: (List<Eventos>) -> Unit){
+
+        var listaEventos: MutableList<Eventos>  = mutableListOf()
+        var historial: MutableList<Eventos>  = mutableListOf()
+
+        getAllEventos {listaAllEventos->
+
+            for(evento in listaAllEventos){
+                listaEventos.add(evento)
+
+            }
+
+        }
+
+        var prueba = listaEventos
+
+        //Bucle para comparar las dos listas
+        listaEventoUsuario(idUsuario){listaEventoUsuarioFiltrada->
+
+            for (eventoUsuario in listaEventoUsuarioFiltrada) {
+
+                for(evento in listaEventos){
+                    if(eventoUsuario.idEvento == evento.id)
+                        historial.add(evento)
+
+                }
+
+            }
+
+        }
+
+        callback(historial)
+
+    }
+
+
 
 }

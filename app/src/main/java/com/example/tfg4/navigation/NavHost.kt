@@ -155,13 +155,14 @@ fun NavGraphBuilder.addCreateEvent(
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addPerfil(
     authViewModel: AuthViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    sharedViewModelEvento: SharedViewModelEvento
 ) {
     composable(
         route = Destinations.perfil.route
     ) {
 
-        perfilScreen(authViewModel,navController)
+        perfilScreen(authViewModel,navController,sharedViewModelEvento)
 
     }
 }
