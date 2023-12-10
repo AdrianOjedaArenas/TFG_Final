@@ -15,6 +15,8 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalTime
@@ -160,13 +162,18 @@ class Controller{
 
         val id = "${idUsuario}-${idEvento}"
 
-        db.collection("EventoUsuario").document(id).set(
-            hashMapOf(
-                "Usuario" to idUsuario,
-                "Evento" to idEvento
-            )
+        val eventoUsuario = EventoUsuario(
+            id = id,
+            idUsuario = idUsuario,
+            idEvento = idEvento
+
         )
-            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+
+        db.collection("EventoUsuario").document(id).set(eventoUsuario)
+            .addOnSuccessListener {documentReference->
+
+
+            }
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 
@@ -174,8 +181,8 @@ class Controller{
 
     fun comprobarInscrito(idUsuario: String?, idEvento: String?, callback: (Boolean) -> Unit) {
         db.collection("EventoUsuario")
-            .whereEqualTo("Evento", idEvento)
-            .whereEqualTo("Usuario", idUsuario)
+            .whereEqualTo("idEvento", idEvento)
+            .whereEqualTo("idUsuario", idUsuario)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 callback(!querySnapshot.isEmpty)
@@ -242,7 +249,10 @@ class Controller{
             .addOnSuccessListener { documents ->
                 val listaHistorial = mutableListOf<EventoUsuario>()
                 for (document in documents) {
-                    val eventoUsuario = document.toObject(EventoUsuario::class.java)
+                    var p = document.id
+
+                    val eventoUsuario :EventoUsuario = document.toObject(EventoUsuario::class.java)
+                    var pId = eventoUsuario.id
                     listaHistorial.add(eventoUsuario)
                 }
                 callback(listaHistorial)
@@ -258,38 +268,34 @@ class Controller{
     //Funcion para obtener el historial con todos los eventos de un usuario
 
 
-    fun historial(idUsuario:String?,callback: (List<Eventos>) -> Unit){
+    @SuppressLint("SuspiciousIndentation")
+    fun historial(idUsuario:String?, callback: (List<Eventos>) -> Unit){
 
         var listaEventos: MutableList<Eventos>  = mutableListOf()
         var historial: MutableList<Eventos>  = mutableListOf()
 
-        getAllEventos {listaAllEventos->
+            // Obtener la lista de eventos
+            getAllEventos { listaAllEventos ->
+                listaEventos.addAll(listaAllEventos)
 
-            for(evento in listaAllEventos){
-                listaEventos.add(evento)
+                // Bucle para comparar las dos listas
+                listaEventoUsuario(idUsuario) { listaEventoUsuarioFiltrada ->
 
-            }
+                    for (eventoUsuario in listaEventoUsuarioFiltrada) {
 
-        }
+                        for (evento in listaEventos) {
 
-        var prueba = listaEventos
-
-        //Bucle para comparar las dos listas
-        listaEventoUsuario(idUsuario){listaEventoUsuarioFiltrada->
-
-            for (eventoUsuario in listaEventoUsuarioFiltrada) {
-
-                for(evento in listaEventos){
-                    if(eventoUsuario.idEvento == evento.id)
-                        historial.add(evento)
-
+                            if (eventoUsuario.idEvento.equals(evento.id))
+                                historial.add(evento)
+                        }
+                    }
+                    // Llamar al callback con el historial después de que se haya llenado
+                    callback(historial)
                 }
+             }
 
-            }
 
-        }
 
-        callback(historial)
 
     }
 

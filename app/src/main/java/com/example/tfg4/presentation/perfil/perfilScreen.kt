@@ -75,7 +75,6 @@ fun EventList(idUsuario : String?, navController: NavHostController,sharedViewMo
         eventosListState.value = eventosList
     }
 
-
     LazyColumn {
         items(eventosListState.value) { evento ->
             MessageCard(evento, navController,sharedViewModelEvento)

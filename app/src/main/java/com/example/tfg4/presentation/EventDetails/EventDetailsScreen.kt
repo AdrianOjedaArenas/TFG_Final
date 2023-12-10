@@ -33,12 +33,11 @@ import java.util.*
 
 @Composable
 fun DetailsScreen(
-    navController: NavHostController,sharedViewModel: SharedViewModelEvento
+     navController: NavHostController,sharedViewModel: SharedViewModelEvento
 ) {
-
-
     Scaffold(
         topBar = {
+
             TopAppBar(
                 title ={
                     Text(
@@ -51,6 +50,7 @@ fun DetailsScreen(
                     )
                 },
                 navigationIcon = {
+
                     IconButton(onClick = {navController.navigate(Destinations.Home.route) })
                     {
                         Icon(Icons.Filled.Close, contentDescription = "Volver")

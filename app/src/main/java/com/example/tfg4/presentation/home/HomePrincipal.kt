@@ -272,7 +272,7 @@ private fun BottomNavigation(modifier: Modifier = Modifier, navController:NavHos
             },
             selected = true,
             onClick = {
-                //Falta meter navegacion
+                navController.navigate(Destinations.Home.route)
 
 
             }

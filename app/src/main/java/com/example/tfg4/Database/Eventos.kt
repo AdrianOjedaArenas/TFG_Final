@@ -1,12 +1,6 @@
 package com.example.tfg4.Database
 
-import android.graphics.Bitmap
-import androidx.compose.ui.graphics.ImageBitmap
-import com.example.tfg4.Utilities.DiferenciaEntreFechaActual
-import java.time.LocalDate
-import java.time.LocalTime
 import java.util.*
-
 
 data class Eventos(
 
