@@ -271,32 +271,25 @@ class Controller{
     @SuppressLint("SuspiciousIndentation")
     fun historial(idUsuario:String?, callback: (List<Eventos>) -> Unit){
 
-        var listaEventos: MutableList<Eventos>  = mutableListOf()
         var historial: MutableList<Eventos>  = mutableListOf()
 
-            // Obtener la lista de eventos
-            getAllEventos { listaAllEventos ->
-                listaEventos.addAll(listaAllEventos)
+        // Obtener la lista de eventos
+        getAllEventos { listaAllEventos ->
 
+            listaEventoUsuario(idUsuario) { listaEventoUsuarioFiltrada ->
                 // Bucle para comparar las dos listas
-                listaEventoUsuario(idUsuario) { listaEventoUsuarioFiltrada ->
+                for (eventoUsuario in listaEventoUsuarioFiltrada) {
 
-                    for (eventoUsuario in listaEventoUsuarioFiltrada) {
+                    for (evento in listaAllEventos) {
 
-                        for (evento in listaEventos) {
-
-                            if (eventoUsuario.idEvento.equals(evento.id))
-                                historial.add(evento)
-                        }
+                        if (eventoUsuario.idEvento.equals(evento.id))
+                            historial.add(evento)
                     }
-                    // Llamar al callback con el historial después de que se haya llenado
-                    callback(historial)
                 }
-             }
-
-
-
-
+                // Llamar al callback con el historial después de que se haya llenado
+                callback(historial)
+            }
+         }
     }
 
 
