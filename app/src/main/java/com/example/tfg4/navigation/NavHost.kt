@@ -17,7 +17,7 @@ import com.example.tfg4.presentation.home.principal
 import com.example.tfg4.presentation.login.LoginScreen
 import com.example.tfg4.presentation.login.LoginViewModel
 import com.example.tfg4.presentation.perfil.AuthViewModel
-import com.example.tfg4.presentation.perfil.perfilScreen
+import com.example.tfg4.presentation.perfil.PerfilScreen
 import com.example.tfg4.presentation.registration.RegisterViewModel
 import com.example.tfg4.presentation.registration.RegistrationScreen
 import com.google.accompanist.navigation.animation.composable
@@ -154,6 +154,7 @@ fun NavGraphBuilder.addCreateEvent(
 @RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addPerfil(
+    mainViewModel:MainViewModel,
     authViewModel: AuthViewModel,
     navController: NavHostController,
     sharedViewModelEvento: SharedViewModelEvento
@@ -162,7 +163,7 @@ fun NavGraphBuilder.addPerfil(
         route = Destinations.perfil.route
     ) {
 
-        perfilScreen(authViewModel,navController,sharedViewModelEvento)
+        PerfilScreen(mainViewModel,authViewModel,navController,sharedViewModelEvento)
 
     }
 }

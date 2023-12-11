@@ -50,7 +50,6 @@ fun principal(
      sharedViewModelEvento: SharedViewModelEvento
 ){
     val searchWidgetState by mainViewModel.searchWidgetState
-    //val searchTextState by mainViewModel.searchTextState
 
     var searchTextState by remember { mutableStateOf("") }
 
@@ -62,7 +61,6 @@ fun principal(
                 searchTextState = searchTextState,
                 onTextChange = {
                                newText -> run { searchTextState = newText }
-                    //mainViewModel.updateSearchTextState(newValue = it)
                 },
                 onCloseClicked = {
                     mainViewModel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
@@ -255,7 +253,7 @@ private fun bottomCreateEvent(modifier: Modifier = Modifier,navController:NavHos
 
 
 @Composable
-private fun BottomNavigation(modifier: Modifier = Modifier, navController:NavHostController) {
+fun BottomNavigation(modifier: Modifier = Modifier, navController:NavHostController) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.background,
         modifier = modifier

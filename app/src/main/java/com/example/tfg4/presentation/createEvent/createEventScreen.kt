@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +25,6 @@ import androidx.navigation.NavHostController
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.material.Text
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
@@ -36,8 +34,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.colorResource
@@ -117,7 +114,7 @@ Scaffold(
             navigationIcon = {
                 IconButton(onClick = {navController.navigate(Destinations.Home.route) })
                 {
-                    Icon(Icons.Filled.Close, contentDescription = "Volver")
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
                 }
             },
             actions = {

@@ -1,14 +1,12 @@
 package com.example.tfg4.presentation.EventDetails
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -23,12 +21,12 @@ import androidx.navigation.NavHostController
 import coil.ImageLoader
 import coil.compose.rememberImagePainter
 import com.example.tfg4.Database.Controller
-import com.example.tfg4.Database.Eventos
 import com.example.tfg4.Utilities.SharedViewModelEvento
 import com.example.tfg4.navigation.Destinations
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.*
+import com.example.tfg4.presentation.home.BottomNavigation
 
 
 @Composable
@@ -39,37 +37,42 @@ fun DetailsScreen(
         topBar = {
 
             TopAppBar(
-                title ={
-                    Text(
-                        "Detalles",
+                title = {
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp),
-                        textAlign = TextAlign.Center,
-                        fontSize = 25.sp
-                    )
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = "Detalles",
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 },
                 navigationIcon = {
 
                     IconButton(onClick = {navController.navigate(Destinations.Home.route) })
                     {
-                        Icon(Icons.Filled.Close, contentDescription = "Volver")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
                     }
 
                 },
             )
         },
-        content = {
-
-            LazyColumn {
-                items(1) { index ->
-                    messageCard(sharedViewModel = sharedViewModel)
-                }
-            }
-            
-            
+        bottomBar = {
+            BottomNavigation(modifier = Modifier, navController)
         }
-    )
+
+    ) {
+        LazyColumn {
+            items(1) { index ->
+                messageCard(sharedViewModel = sharedViewModel)
+            }
+        }
+
+    }
+
 }
 
 @Composable
